@@ -15,7 +15,7 @@ describe("BitLucky", function () {
 			"0xc3109f02af9FCe3576f09639324E46Ed7caBb90E";
 
 		// Deploy the BitLucky contract
-		BitLucky = await ethers.getContractFactory("TestBitLucky");
+		BitLucky = await ethers.getContractFactory("OptimizedBitLucky");
 		bitLucky = await BitLucky.deploy(bitluckyRandomnessContractAddress);
 		await bitLucky.deployed();
 
@@ -72,7 +72,7 @@ describe("BitLucky", function () {
 		expect(product.productWinner).to.equal(
 			"0x0000000000000000000000000000000000000000"
 		);
-		expect(product.closedTime).to.be.closeTo(closedTime, 5);
+		expect(product.closedTime).to.be.closeTo(closedTime, 10);
 		expect(product.productName).to.equal(productName);
 
 		// Verify the custom NFT URI

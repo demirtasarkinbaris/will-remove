@@ -79,6 +79,7 @@ contract TestBitLucky is ERC1155, Ownable {
         uint16 _maxTickets,
         uint256 _closedTime,
         string memory _productName,
+        string memory _productType,
         string memory _nftURI
     ) public onlyOwner {
         require(_ticketPrice > 0, "Ticket price must be greater than 0");
@@ -95,7 +96,8 @@ contract TestBitLucky is ERC1155, Ownable {
             productID: productCount,
             isAllSold: false,
             productWinner: address(0),
-            productName: _productName
+            productName: _productName,
+            productType: _productType
         });
 
         products.push(newProduct);

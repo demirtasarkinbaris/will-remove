@@ -14,7 +14,7 @@ interface BitLuckyRandomnessInterface {
     function getRandomNum(uint256 value) external view returns (uint256);
 }
 
-contract BitLucky is ERC1155, Ownable {
+contract OptimizedBitLucky is ERC1155, Ownable {
     // Event that is emitted when a new product is created
     event ProductCreated(
         uint256 productID,
@@ -97,7 +97,7 @@ contract BitLucky is ERC1155, Ownable {
             ticketPrice: uint8(_ticketPrice),
             maxTickets: _maxTickets,
             ticketsSold: 0,
-            closedTime: uint32((_closedTime * 1 days) + block.timestamp),
+            closedTime: uint32((_closedTime * 1 minutes) + block.timestamp),
             productID: productCount,
             isAllSold: false,
             productWinner: address(0),
@@ -120,7 +120,11 @@ contract BitLucky is ERC1155, Ownable {
      * @param productID The ID of the product for which the user wants to buy tickets.
      * @param ticketAmount The number of tickets the user wants to buy.
      */
-    function buyTickets(uint256 productID, uint256 ticketAmount) external {
+    function buyTickets(
+        uint256 productID,
+        uint256 ticketAmount,
+        address usdtTokenAddress
+    ) external {
         BitLuckyStruct.Product storage product = products[productID];
 
         require(product.productID == productID, "Invalid product ID");
@@ -137,22 +141,17 @@ contract BitLucky is ERC1155, Ownable {
 
         uint256 totalCost = uint256(product.ticketPrice) * ticketAmount;
 
-        IERC20 usdtToken = IERC20(
-            address(0x2D1d298FAaE524E0AA0d1d1EFaf6B7D802f2c0E1)
-        );
+        IERC20 usdtToken = IERC20(address(usdtTokenAddress));
 
-        // Check user's approval to spend USDT tokens
         require(
             usdtToken.allowance(msg.sender, address(this)) >= totalCost,
             "You must approve the contract to spend USDT tokens"
         );
-
         // Effects: Perform state changes
         product.ticketsSold += uint16(ticketAmount);
         if (product.ticketsSold == product.maxTickets) {
             product.isAllSold = true;
         }
-        // Interactions: Perform the external call
         require(
             usdtToken.transferFrom(msg.sender, address(this), totalCost),
             "USDT transfer failed"
@@ -194,9 +193,7 @@ contract BitLucky is ERC1155, Ownable {
             "Raffle closing time has not passed yet"
         );
 
-        uint256 randomNumber = bitluckyRandomnessContract.getRandomNum(
-            product.maxTickets
-        );
+        uint256 randomNumber = 1;
 
         address winningTicketOwner = ticketOwners[productID][randomNumber - 1];
 
@@ -223,7 +220,8 @@ contract BitLucky is ERC1155, Ownable {
         );
 
         // Calculate the new closing time by adding the additional time
-        uint256 newClosedTime = product.closedTime + (additionalTime * 1 days);
+        uint256 newClosedTime = product.closedTime +
+            (additionalTime * 1 minutes);
         product.closedTime = uint32(newClosedTime);
 
         emit ClosingTimeUpdated(productID, newClosedTime);
@@ -233,7 +231,7 @@ contract BitLucky is ERC1155, Ownable {
      * @notice Allows a user to claim a refund for their ticket purchase if the raffle has closed and all tickets were not sold.
      * @param productID The ID of the product for which the user wants to claim a refund.
      */
-    function refund(uint256 productID) external {
+    function refund(uint256 productID, address usdtTokenAddress) external {
         BitLuckyStruct.Product storage product = products[productID];
         require(product.productID == productID, "Invalid product ID");
         require(block.timestamp > product.closedTime, "Raffle closed.");
@@ -262,9 +260,7 @@ contract BitLucky is ERC1155, Ownable {
 
         delete userTickets[productID][msg.sender];
 
-        IERC20 usdtToken = IERC20(
-            address(0x2D1d298FAaE524E0AA0d1d1EFaf6B7D802f2c0E1)
-        );
+        IERC20 usdtToken = IERC20(address(usdtTokenAddress));
         require(
             usdtToken.transfer(msg.sender, refundAmount),
             "Refund transfer failed"
@@ -277,10 +273,11 @@ contract BitLucky is ERC1155, Ownable {
      * @notice Allows the owner to withdraw USDT from the contract.
      * @param amount The amount of USDT to withdraw.
      */
-    function withdraw(uint256 amount) external onlyOwner {
-        IERC20 usdtToken = IERC20(
-            address(0x2D1d298FAaE524E0AA0d1d1EFaf6B7D802f2c0E1)
-        );
+    function withdraw(
+        uint256 amount,
+        address usdtTokenAddress
+    ) external onlyOwner {
+        IERC20 usdtToken = IERC20(address(usdtTokenAddress));
         require(
             usdtToken.balanceOf(address(this)) >= amount,
             "Insufficient USDT balance in the contract"

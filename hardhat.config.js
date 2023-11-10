@@ -2,6 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config({ path: ".env" });
 require("solidity-coverage");
 require("hardhat-gas-reporter");
+require("@typechain/hardhat");
 
 const QUICKNODE_HTTP_URL = process.env.QUICKNODE_HTTP_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
@@ -27,5 +28,9 @@ module.exports = {
 		coinmarketcap: process.env.coinMarketCap_API,
 		token: "MATIC",
 		noColors: true,
+	},
+	typechain: {
+		outDir: "typechain",
+		target: "ethers-v5",
 	},
 };

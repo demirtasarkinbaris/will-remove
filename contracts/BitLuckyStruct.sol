@@ -19,5 +19,6 @@ contract BitLuckyStruct {
         bool isAllSold; // Flag to indicate if all tickets for this product are sold
         address productWinner; // Address of the product winner
         string productName; // Name of the product
+        string productType; // Type of the product
     }
 }
