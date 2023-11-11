@@ -13,6 +13,8 @@ import shoesImage from "../assets/items/shoes.jpeg";
 import sunglassesImage from "../assets/items/sunglasses.jpeg";
 import trainImage from "../assets/items/train.jpeg";
 import watchImage from "../assets/items/watch.jpeg";
+import phoneImage from "../assets/items/phone.jpeg";
+
 import BitLuckyRandomnessABI from "../abis/BitLuckyRandomness.json";
 import testUSDTABI from "../abis/testUSDT.json";
 const testUSDTContractAddress = "0x2D1d298FAaE524E0AA0d1d1EFaf6B7D802f2c0E1";
@@ -100,6 +102,34 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 		}
 	};
 
+	const [additionalTime, setAdditionalTime] = useState(0);
+
+	const handleAdditionalTimeChange = (event) => {
+		const enteredTime = parseInt(event.target.value, 10);
+		setAdditionalTime(isNaN(enteredTime) ? 0 : enteredTime);
+	};
+
+	const updateClosedTimeHandler = async () => {
+		try {
+			const transaction = await bitLucky.updateClosedTime(
+				product.productID,
+				additionalTime
+			);
+			await transaction.wait();
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
+
+	const refundHandler = async () => {
+		try {
+			const transaction = await bitLucky.refund(product.productID);
+			await transaction.wait();
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
+
 	const calculateCountdown = () => {
 		const closedTime = new Date(product.closedTime * 1000); // Saniyeleri milisaniyeye çevirir
 		const now = new Date();
@@ -144,6 +174,7 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 		sunglasses: sunglassesImage,
 		train: trainImage,
 		watch: watchImage,
+		phone: phoneImage,
 	};
 
 	const descriptions = {
@@ -164,6 +195,8 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 			"This battery-powered train and track set includes Thomas and Friends characters - Thomas, Vinç Crane, and Otoray Sandy. Children can use Vinç Crane's hook to load and unload cargo from Thomas's freight car. Otoray Sandy accompanies Vinç Crane in their adventures on this fun track set. You can connect this set to other Thomas & Friends track sets (except wooden ones) for endless adventure options (other track sets sold separately). Suitable for preschoolers aged 3 and above.",
 		watch:
 			"The CASIO Steel Business Watch is a stylish and versatile timepiece. It features a steel case and steel strap, with a case diameter ranging from 41mm to 46mm. The case and strap are both made of steel, giving the watch durability and a classic look. The case color is smoky (fume), and the strap is black. The watch has an analog mechanism with a round dial and a domed glass. It belongs to the Business collection and comes with no warranty. The design is a plain color with a black color scheme, making it suitable for various business environments.",
+		phone:
+			"iPhone 15 is a smart phone from Apple with powerful A16 Bionic processor, 48 MP camera, water resistance, fast charging, and a range of advanced features.",
 	};
 
 	const productDescription = descriptions[product.productName.toLowerCase()];
@@ -178,6 +211,7 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 		shoes: "Jumpman MVP Sneakers",
 		train: "Thomas & Friends Train Set",
 		watch: "CASIO Steel Business Watch",
+		phone: "iPhone 15",
 	};
 
 	const [ticketSold, setTicketSold] = useState(product.ticketsSold);
@@ -236,14 +270,50 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 						onChange={handleTicketAmountChange}
 					/>
 
-					<button className="product__buy" onClick={buyTicketHandler}>
-						Buy Ticket
-					</button>
+					{account !== "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
+						<button
+							className="product__buy"
+							onClick={buyTicketHandler}
+							disabled={product.isAllSold}>
+							Buy Ticket
+						</button>
+					)}
 
-					{account == "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
-						<button className="product__buy" onClick={selectWinnerHandler}>
+					{account !== "0x34e365769790760B11CE7ff781A373AC7E4D86bD" &&
+						!product.isAllSold &&
+						Date.now() > product.closedTime * 1000 && (
+							<button className="product__buy" onClick={refundHandler}>
+								Refund
+							</button>
+						)}
+
+					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
+						<button
+							className="product__buy"
+							onClick={selectWinnerHandler}
+							disabled={!product.isAllSold}>
 							Select Winner
 						</button>
+					)}
+					<br />
+
+					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
+						<div>
+							<label htmlFor="additionalTime">Additional Time (in days):</label>
+							<input
+								type="number"
+								id="additionalTime"
+								name="additionalTime"
+								min="0"
+								value={additionalTime}
+								onChange={handleAdditionalTimeChange}
+							/>
+							<button
+								className="product__buy"
+								onClick={updateClosedTimeHandler}>
+								Update Closed Time
+							</button>
+						</div>
 					)}
 				</div>
 

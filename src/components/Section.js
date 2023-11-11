@@ -9,6 +9,7 @@ import shoesImage from "../assets/items/shoes.jpeg";
 import sunglassesImage from "../assets/items/sunglasses.jpeg";
 import trainImage from "../assets/items/train.jpeg";
 import watchImage from "../assets/items/watch.jpeg";
+import phoneImage from "../assets/items/phone.jpeg";
 
 const Section = ({ title, product, togglePop }) => {
 	const names = {
@@ -21,6 +22,7 @@ const Section = ({ title, product, togglePop }) => {
 		shoes: "Jumpman MVP Sneakers",
 		train: "Thomas & Friends Train Set",
 		watch: "CASIO Steel Business Watch",
+		phone: "iPhone 15",
 	};
 
 	const imageImports = {
@@ -33,6 +35,7 @@ const Section = ({ title, product, togglePop }) => {
 		sunglasses: sunglassesImage,
 		train: trainImage,
 		watch: watchImage,
+		phone: phoneImage,
 	};
 
 	return (

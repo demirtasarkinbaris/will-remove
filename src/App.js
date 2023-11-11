@@ -54,9 +54,11 @@ function App() {
 
 		console.log(bitLucky);
 
+		const productCount = await contract.productCount();
+
 		const products = [];
 
-		for (var i = 0; i < 9; i++) {
+		for (var i = 0; i < productCount; i++) {
 			const product = await contract.products(i);
 			products.push(product);
 		}

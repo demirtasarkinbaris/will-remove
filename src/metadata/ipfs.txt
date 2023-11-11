@@ -7,3 +7,4 @@ ipfs://bafkreihfmt5idbze2queoxt3cftoy5k7mwxyrm3wsz7j72vrpvp4oh2xg4 --> glass
 ipfs://bafkreic6e4ksdx3msf6yhikaemiu7b7qipaooqzltyso7pcq4ierojxgsu --> train
 ipfs://bafkreia6sfu24jq4marcipg4sjxbg6ih23cll4crkjuln3clfslpuk2pzi --> watch
 ipfs://bafkreihsga26t6caynxhelsmn7zfbiyiadyj2u4ckskaqv7ynobkjwlhei --> shoes
+ipfs://bafkreif55p3jzh4ikuhbqdfltvdbe37inofmnzhvy2g4c6wlktawa7ql7m --> phone
