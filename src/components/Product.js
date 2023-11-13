@@ -131,9 +131,18 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 	};
 
 	const calculateCountdown = () => {
-		const closedTime = new Date(product.closedTime * 1000); // Saniyeleri milisaniyeye çevirir
+		const closedTime = new Date(product.closedTime * 1000);
 		const now = new Date();
 		const timeDifference = closedTime - now;
+
+		// Check if the current time is after the closed time
+		const isClosed = timeDifference <= 0;
+
+		if (isClosed) {
+			return {
+				isClosed: true,
+			};
+		}
 
 		const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 		const hours = Math.floor(
@@ -145,6 +154,7 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 		const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
 		return {
+			isClosed: false,
 			days,
 			hours,
 			minutes,
@@ -246,10 +256,14 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 
 				<div className="product__order">
 					<h1 style={{ fontSize: "1.2em" }}>Closed Time</h1>
-					<p style={{ fontSize: "0.8em" }}>
-						{countdown.days} days {countdown.hours} hours {countdown.minutes}{" "}
-						minutes {countdown.seconds} seconds
-					</p>
+					{countdown.isClosed ? (
+						<p style={{ fontSize: "0.8em" }}>Closed</p>
+					) : (
+						<p style={{ fontSize: "0.8em" }}>
+							{countdown.days} days {countdown.hours} hours {countdown.minutes}{" "}
+							minutes {countdown.seconds} seconds
+						</p>
+					)}
 					<hr />
 					<br />
 					<h1 style={{ fontSize: "1.2em" }}>Ticket Sold</h1>
@@ -260,23 +274,25 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 					<p style={{ fontSize: "0.8em" }}>{product.maxTickets}</p>
 					<hr />
 					<br />
-					<label htmlFor="ticketAmount">Ticket Amount:</label>
-					<input
-						type="number"
-						id="ticketAmount"
-						name="ticketAmount"
-						min="1"
-						value={ticketAmount}
-						onChange={handleTicketAmountChange}
-					/>
 
 					{account !== "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
-						<button
-							className="product__buy"
-							onClick={buyTicketHandler}
-							disabled={product.isAllSold}>
-							Buy Ticket
-						</button>
+						<div>
+							<label htmlFor="ticketAmount">Ticket Amount:</label>
+							<input
+								type="number"
+								id="ticketAmount"
+								name="ticketAmount"
+								min="1"
+								value={ticketAmount}
+								onChange={handleTicketAmountChange}
+							/>
+							<button
+								className="product__buy"
+								onClick={buyTicketHandler}
+								disabled={product.isAllSold}>
+								Buy Ticket
+							</button>
+						</div>
 					)}
 
 					{account !== "0x34e365769790760B11CE7ff781A373AC7E4D86bD" &&
@@ -286,16 +302,6 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 								Refund
 							</button>
 						)}
-
-					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
-						<button
-							className="product__buy"
-							onClick={selectWinnerHandler}
-							disabled={!product.isAllSold}>
-							Select Winner
-						</button>
-					)}
-					<br />
 
 					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
 						<div>
@@ -315,6 +321,19 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 							</button>
 						</div>
 					)}
+
+					<hr />
+					<br />
+
+					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
+						<button
+							className="product__buy"
+							onClick={selectWinnerHandler}
+							disabled={!product.isAllSold}>
+							Select Winner
+						</button>
+					)}
+					<br />
 				</div>
 
 				<button onClick={togglePop} className="product__close">
