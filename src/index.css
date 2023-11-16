@@ -353,3 +353,79 @@ nav {
     grid-column: span 2;
   }
 }
+
+/* Add the following code at the end of your existing CSS */
+
+/* Mobile Styles */
+@media screen and (max-width: 576px) {
+  h2 {
+    font-size: 1.5em;
+  }
+
+  nav {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .nav__brand h1 {
+    font-size: 2em;
+  }
+
+  .nav__links {
+    grid-column: 1 / span 1;
+    justify-content: space-around;
+    background-color: var(--clr-bunker);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+
+  .nav__links.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav__links li {
+    margin: 15px 0;
+  }
+
+  .nav__search {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .product__details {
+    grid-template-columns: 1fr;
+    height: auto;
+    width: 100%;
+  }
+
+  .product__order {
+    grid-column: 1 / span 1;
+  }
+
+  .product__overview {
+    padding: 20px;
+  }
+
+  .product__image {
+    grid-column: span 1;
+  }
+}

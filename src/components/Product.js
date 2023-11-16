@@ -298,9 +298,13 @@ const Product = ({ product, provider, account, bitLucky, togglePop }) => {
 					{account !== "0x34e365769790760B11CE7ff781A373AC7E4D86bD" &&
 						!product.isAllSold &&
 						Date.now() > product.closedTime * 1000 && (
-							<button className="product__buy" onClick={refundHandler}>
-								Refund
-							</button>
+							<div>
+								<hr />
+								<br />
+								<button className="product__buy" onClick={refundHandler}>
+									Refund
+								</button>
+							</div>
 						)}
 
 					{account === "0x34e365769790760B11CE7ff781A373AC7E4D86bD" && (
