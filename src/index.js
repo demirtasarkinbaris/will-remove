@@ -4,44 +4,10 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import {
-	mainnet,
-	polygon,
-	optimism,
-	arbitrum,
-	base,
-	zora,
-	polygonMumbai,
-} from "wagmi/chains";
-
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { publicProvider } from "wagmi/providers/public";
-const { chains, publicClient } = configureChains(
-	[mainnet, polygon, optimism, arbitrum, base, zora, polygonMumbai],
-	[alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
-);
-const { connectors } = getDefaultWallets({
-	appName: "bitlucky",
-	projectId: "4e8ebb4fe6a5ef57bfa6751bc31e78d3",
-	chains,
-});
-const wagmiConfig = createConfig({
-	autoConnect: true,
-	connectors,
-	publicClient,
-});
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 	<React.StrictMode>
-		<WagmiConfig config={wagmiConfig}>
-			<RainbowKitProvider chains={chains}>
-				<App />
-			</RainbowKitProvider>
-		</WagmiConfig>
+		<App />
 	</React.StrictMode>
 );
 
