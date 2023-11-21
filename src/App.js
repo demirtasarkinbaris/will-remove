@@ -50,16 +50,18 @@ function App() {
 		console.log(signer);
 		const contract = fetchContract(signer);
 
+		const getContract = fetchContract(provider);
+
 		setBitLucky(contract);
 
 		console.log(bitLucky);
 
-		const productCount = await contract.productCount();
+		const productCount = await getContract.productCount();
 
 		const products = [];
 
 		for (var i = 0; i < productCount; i++) {
-			const product = await contract.products(i);
+			const product = await getContract.products(i);
 			products.push(product);
 		}
 
